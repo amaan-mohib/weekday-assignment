@@ -5,7 +5,6 @@ import {
   Divider,
   Drawer,
   IconButton,
-  List,
   Toolbar,
   Typography,
 } from "@mui/material";

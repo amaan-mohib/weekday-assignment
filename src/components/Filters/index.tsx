@@ -37,7 +37,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   };
 }
 
-const roles = [
+export const roles = [
   { label: "Backend", value: "backend" },
   { label: "Frontend", value: "frontend" },
   { label: "Fullstack", value: "fullstack" },
@@ -56,7 +56,7 @@ const roles = [
   { label: "Deep Learning", value: "deep learning" },
 ];
 
-const locations = [
+export const locations = [
   { label: "Remote", value: "remote" },
   { label: "Hybrid", value: "hybrid" },
   { label: "Bangalore", value: "bangalore" },

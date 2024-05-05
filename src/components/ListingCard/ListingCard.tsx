@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Box,
   Button,
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { IListing } from "../../utils";
 import "./styles.css";
+import { locations, roles } from "../Filters";
 
 interface ListingCardProps {
   listItem: IListing;
@@ -60,10 +60,15 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
                   {listItem.companyName}
                 </Typography>
                 <Typography textTransform={"capitalize"}>
-                  {listItem.jobRole}
+                  {roles.find((item) => item.value === listItem.jobRole)
+                    ?.label || listItem.jobRole}
                 </Typography>
-                <Typography textTransform={"capitalize"} fontSize="12px">
-                  {listItem.location}
+                <Typography
+                  textTransform={"capitalize"}
+                  fontSize="14px"
+                  fontWeight={500}>
+                  {locations.find((item) => item.value === listItem.location)
+                    ?.label || listItem.location}
                 </Typography>
               </Stack>
             </Stack>
