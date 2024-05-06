@@ -73,17 +73,19 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
                 </Typography>
               </Stack>
             </Stack>
-            <Typography>{`Estimated Salary: ${
-              listItem.salaryCurrencyCode === "USD"
-                ? "$"
-                : listItem.salaryCurrencyCode === "INR"
-                ? "₹"
-                : listItem.salaryCurrencyCode
-            }${listItem.minJdSalary || 0} - ${
-              listItem.maxJdSalary || listItem.minJdSalary || 0
-            } ${
-              listItem.salaryCurrencyCode === "INR" ? "LPA" : "TPY"
-            }`}</Typography>
+            <Typography>
+              {listItem.minJdSalary || listItem.maxJdSalary
+                ? `Estimated Salary: ${
+                    listItem.salaryCurrencyCode === "USD"
+                      ? "$"
+                      : listItem.salaryCurrencyCode === "INR"
+                      ? "₹"
+                      : listItem.salaryCurrencyCode
+                  }${listItem.minJdSalary || 0} - ${
+                    listItem.maxJdSalary || listItem.minJdSalary || 0
+                  } ${listItem.salaryCurrencyCode === "INR" ? "LPA" : "TPY"}`
+                : ""}
+            </Typography>
             <div style={{ position: "relative" }}>
               <div className="description-wrapper" ref={descriptionRef}>
                 {listItem.jobDetailsFromCompany}
@@ -96,12 +98,16 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
                 </div>
               )}
             </div>
-            <Stack>
-              <Typography color="text.secondary">Experience</Typography>
-              <Typography>
-                {listItem.minExp || 0} - {listItem.maxExp || 0} years
-              </Typography>
-            </Stack>
+            {listItem.minExp && listItem.maxExp ? (
+              <Stack>
+                <Typography color="text.secondary">Experience</Typography>
+                <Typography>
+                  {listItem.minExp || 0} - {listItem.maxExp || 0} years
+                </Typography>
+              </Stack>
+            ) : (
+              <div style={{ height: 48 }}></div>
+            )}
             <Button
               target="_blank"
               LinkComponent={"a"}
