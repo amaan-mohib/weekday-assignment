@@ -125,6 +125,7 @@ const Listing: React.FC<ListingProps> = () => {
     }
   }, [listing]);
 
+  // gets recalculated only when listing or filters are changed
   const filteredList = useMemo(() => {
     return listing.filter((list) => isFilteredItem(list));
   }, [listing, filters]);
