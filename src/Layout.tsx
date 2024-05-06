@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Badge,
   Box,
   CssBaseline,
   Divider,
@@ -8,15 +9,25 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { PropsWithChildren, useState } from "react";
-import MenuIcon from "@mui/icons-material/Menu";
+import React, { PropsWithChildren, useMemo, useState } from "react";
 import Filters from "./components/Filters";
+import { useAppSelector } from "./hooks";
+import { FilterAlt } from "@mui/icons-material";
 
 interface LayoutProps extends PropsWithChildren {}
 
 const drawerWidth = 320;
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const appliedFilters = useAppSelector(
+    (state) => state.filters.appliedFilters
+  );
+
+  // calculate the filter count only when a filter is applied
+  const appliedFilterCount = useMemo(() => {
+    return Object.values(appliedFilters).filter((v) => !!v).length;
+  }, [appliedFilters]);
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -37,7 +48,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar>
+        {appliedFilterCount > 0 && `${appliedFilterCount} filters applied`}
+      </Toolbar>
       <Divider />
       <Filters />
     </div>
@@ -59,7 +72,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}>
-            <MenuIcon />
+            <Badge color="secondary" badgeContent={appliedFilterCount}>
+              <FilterAlt />
+            </Badge>
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Search jobs
@@ -68,9 +83,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </AppBar>
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}

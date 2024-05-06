@@ -13,7 +13,18 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback } from "react";
+import { useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import {
+  IFilters,
+  setExperience,
+  setLocations,
+  setMinBasePay,
+  setRoles,
+  setSearch,
+} from "../../store/filtersSlice";
+import { debounce } from "../../utils";
 
 interface FiltersProps {}
 
@@ -90,11 +101,51 @@ const payMarks = [
   { value: 70, label: "70L" },
 ];
 
+type TOnChange =
+  | {
+      key: "search";
+      value: string;
+    }
+  | {
+      key: "roles" | "locations";
+      value: string[];
+    }
+  | {
+      key: "experience" | "minBasePay";
+      value: number;
+    };
+
 const Filters: React.FC<FiltersProps> = () => {
+  const filters = useAppSelector((state) => state.filters);
+  const dispatch = useAppDispatch();
   const theme = useTheme();
+
+  const debouncedOnChange = useCallback(
+    debounce(({ key, value }: TOnChange) => {
+      if (key === "search") {
+        dispatch(setSearch(value));
+      } else if (key === "roles") {
+        dispatch(setRoles(value));
+      } else if (key === "locations") {
+        dispatch(setLocations(value));
+      } else if (key === "experience") {
+        dispatch(setExperience(value));
+      } else if (key === "minBasePay") {
+        dispatch(setMinBasePay(value));
+      }
+    }),
+    []
+  );
+
   return (
     <Stack style={{ padding: "20px 10px" }} spacing={2}>
-      <TextField label="Search" variant="outlined" />
+      <TextField
+        label="Search"
+        variant="outlined"
+        onChange={(e) => {
+          debouncedOnChange({ key: "search", value: e.target.value });
+        }}
+      />
       <Typography>Filters</Typography>
       <FormControl sx={{ m: 1, width: 300 }}>
         <InputLabel>Role</InputLabel>
@@ -102,13 +153,22 @@ const Filters: React.FC<FiltersProps> = () => {
           labelId="demo-multiple-role-label"
           id="demo-multiple-role"
           multiple
-          value={[]}
-          // onChange={handleChange}
+          value={filters.roles}
+          onChange={(e) => {
+            const value = e.target.value;
+            debouncedOnChange({
+              key: "roles",
+              value: Array.isArray(value) ? value : [value],
+            });
+          }}
           input={<OutlinedInput id="select-multiple-roles" label="Role" />}
           renderValue={(selected: string[]) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {selected.map((value) => (
-                <Chip key={value} label={value} />
+                <Chip
+                  key={value}
+                  label={roles.find((item) => item.value === value)?.label}
+                />
               ))}
             </Box>
           )}
@@ -129,15 +189,24 @@ const Filters: React.FC<FiltersProps> = () => {
           labelId="demo-multiple-location-label"
           id="demo-multiple-location"
           multiple
-          value={[]}
-          // onChange={handleChange}
+          value={filters.locations}
+          onChange={(e) => {
+            const value = e.target.value;
+            debouncedOnChange({
+              key: "locations",
+              value: Array.isArray(value) ? value : [value],
+            });
+          }}
           input={
             <OutlinedInput id="select-multiple-location" label="Location" />
           }
           renderValue={(selected: string[]) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {selected.map((value) => (
-                <Chip key={value} label={value} />
+                <Chip
+                  key={value}
+                  label={locations.find((item) => item.value === value)?.label}
+                />
               ))}
             </Box>
           )}
@@ -161,7 +230,13 @@ const Filters: React.FC<FiltersProps> = () => {
             defaultValue={1}
             aria-label="Small"
             valueLabelDisplay="auto"
-            min={0}
+            // value={filters.experience ?? 1}
+            onChange={(_, value) => {
+              if (typeof value === "number") {
+                debouncedOnChange({ key: "experience", value: value });
+              }
+            }}
+            min={1}
             max={10}
           />
         </div>
@@ -174,6 +249,11 @@ const Filters: React.FC<FiltersProps> = () => {
             marks={payMarks}
             size="small"
             defaultValue={10}
+            onChange={(_, value) => {
+              if (typeof value === "number") {
+                debouncedOnChange({ key: "minBasePay", value: value });
+              }
+            }}
             aria-label="Small"
             valueLabelDisplay="auto"
             min={1}

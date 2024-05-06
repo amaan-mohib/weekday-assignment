@@ -48,3 +48,15 @@ export const apiCaller = async (page = 1) => {
     };
   }
 };
+
+export const debounce = (func: (...args: any) => void, timeout = 300) => {
+  let timer: number | undefined;
+  return (...args: any) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      func(...args);
+    }, timeout);
+  };
+};

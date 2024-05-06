@@ -78,7 +78,9 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
                 : listItem.salaryCurrencyCode === "INR"
                 ? "₹"
                 : listItem.salaryCurrencyCode
-            }${listItem.minJdSalary || 0} - ${listItem.maxJdSalary} ${
+            }${listItem.minJdSalary || 0} - ${
+              listItem.maxJdSalary || listItem.minJdSalary || 0
+            } ${
               listItem.salaryCurrencyCode === "INR" ? "LPA" : "TPY"
             }`}</Typography>
             <div style={{ position: "relative" }}>
@@ -94,10 +96,9 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
               )}
             </div>
             <Stack>
-              <Typography color="text.secondary">Minimum experience</Typography>
+              <Typography color="text.secondary">Experience</Typography>
               <Typography>
-                {listItem.minExp || 0} year
-                {(listItem.minExp || 0) > 1 ? "s" : ""}
+                {listItem.minExp || 0} - {listItem.maxExp || 0} years
               </Typography>
             </Stack>
             <Button
