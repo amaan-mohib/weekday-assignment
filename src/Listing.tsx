@@ -103,19 +103,27 @@ const Listing: React.FC<ListingProps> = () => {
       setTotalCount(totalCount);
       setIsLoading(false);
       setStartObserver(true);
-
-      // if the observed element is still visible on the viewport increment the page
-      if (
-        observerRef.current &&
-        window.innerHeight >= observerRef.current.getBoundingClientRect().top &&
-        startObserver
-      ) {
-        setTimeout(() => {
-          setPage((prev) => prev + 1);
-        }, 500);
-      }
     });
   }, [page]);
+
+  useEffect(() => {
+    /**
+     * if the observed element is still visible on the viewport after the API call, increment the page
+     * needed to add this because once the listing is filtered
+     * the list becomes shorter and the listing does not gets updated unless we scroll
+     * or worst case we just cannot scroll, but the total count is not yet reached
+     * we need to further get the data without scrolling
+     */
+    if (
+      observerRef.current &&
+      window.innerHeight >= observerRef.current.getBoundingClientRect().top &&
+      startObserver
+    ) {
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+      }, 500);
+    }
+  }, [listing]);
 
   const filteredList = useMemo(() => {
     return listing.filter((list) => isFilteredItem(list));
