@@ -14,10 +14,8 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import {
-  IFilters,
   setExperience,
   setLocations,
   setMinBasePay,

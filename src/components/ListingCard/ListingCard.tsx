@@ -24,6 +24,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listItem }) => {
 
   useEffect(() => {
     if (!descriptionRef.current) return;
+    // calculate whether to show "View more" button on description based on overflow
     setShowViewMore(
       descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight
     );
